@@ -3,18 +3,9 @@
 #include <bitset>
 #include <vector>
 #include <stdio.h>
+#include <string.h>
 using namespace std;
-class entry
-{
-	public:
-		bitset<10> history;
-		int taken;
-		entry()
-		{
-			history.reset();
-			taken=2;
-		}
-};
+
 int strtoint(char* pc)
 {
 	int ret=0;
@@ -28,14 +19,16 @@ int strtoint(char* pc)
 			ret=ret*16+tmp-'a'+10;
 		}
 	}
-	return ret;
+	return ret%4096;
 }
-entry predicttab[4096];
+int predicttab[4096][1024];
 int main()
 {
+	memset(predicttab,0,1024*1024);
 	unsigned long miss=0;
 	unsigned long total=0;
 	string str;
+	int history=0;
 	while(getline(cin,str))
 	{
 		total++;
@@ -45,21 +38,19 @@ int main()
 		int index=strtoint(curpc);
 		if((strtoint(nexpc)-index)%4096!=4)
 		{
-			predicttab[index].history=predicttab[index].history<<1;
-			predicttab[index].history.set(0,1);
-			if(predicttab[index].taken<2)
+			if(predicttab[index][history]<2)
 				miss++;
-			if(predicttab[index].taken<3)
-				predicttab[index].taken++;
+			if(predicttab[index][history]<3)
+				predicttab[index][history]++;
+			history=(history*2+1)%1024;
 		}
 		else
 		{
-			predicttab[index].history=predicttab[index].history<<1;
-			predicttab[index].history.set(0,0);
-			if(predicttab[index].taken>1)
+			if(predicttab[index][history]>1)
 				miss++;
-			if(predicttab[index].taken>0)
-				predicttab[index].taken--;
+			if(predicttab[index][history]>0)
+				predicttab[index][history]--;
+			history=history*2%1024;
 		}
 	}
 	cout<<float(miss)/total<<endl;

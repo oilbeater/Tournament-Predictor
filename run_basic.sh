@@ -6,10 +6,3 @@
 ./basic_predictor < mcf.log
 ./basic_predictor < parser.log
 ./basic_predictor < vpr.log
-./tournament < gcc.log
-./tournament < compress.log
-./tournament < crafty.log
-./tournament < gzip.log
-./tournament < mcf.log
-./tournament < parser.log
-./tournament < vpr.log
